@@ -1,7 +1,7 @@
 <?php
 
 
-/*
+/**
 ____________________________________________
 
 Push : Observer to subject
@@ -11,14 +11,20 @@ ___________________________________________
 
 */
 
+	interface Subject {
 
-	class Observer {
+		public function add(Observer $observer);
+		public function notify($value);
 
-		private $subjectes = array();
+	}
 
-		public function add(Subject $subject) {
+	class Subject_1 implements Subject {
 
-			array_push($this->subjectes, $subject);
+		private $observers = array();
+
+		public function add(Observer $observer) {
+
+			array_push($this->observers, $observer);
 
 		}
 
@@ -29,7 +35,7 @@ ___________________________________________
 				$this->notify(rand(23.99, 199.42));
 			}
 			else {
-				echo "Nothing is updated in Observer <br />";
+				echo "Nothing is updated in Target <br />";
 			}
 
 			
@@ -37,20 +43,20 @@ ___________________________________________
 
 		public function notify($value) {
 
-			foreach ($this->subjectes as $subject) {
+			foreach ($this->observers as $observer) {
 
-				$subject->update($value + rand(23.99, 199.42));
+				$observer->update($value + rand(23.99, 199.42));
 			}
 		}
 	}
 
-	interface Subject {
+	interface Observer {
 
 		public function update($value);
 
 	}
 
-	class Subject_1 implements Subject {
+	class Observer_1 implements Observer {
 
 		private $value;
 
@@ -58,7 +64,7 @@ ___________________________________________
 
 			$this->value = $value;
 
-			echo "<pre>Initial value (In Subject_1) = ".$value."</pre>";
+			echo "<pre>Initial value (In Subject_1) = ".$this->value."</pre>";
 		}
 
 		public function update($value) {
@@ -69,7 +75,7 @@ ___________________________________________
 		}
 	}
 
-	class Subject_2 implements Subject {
+	class Observer_2 implements Observer {
 
 		private $value;
 
@@ -77,7 +83,7 @@ ___________________________________________
 
 			$this->value = $value;
 
-			echo "<pre>Initial value (In Subject_2) ".$value."</pre>";
+			echo "<pre>Initial value (In Subject_2) ".$this->value."</pre>";
 		}
 
 		public function update($value) {
@@ -90,29 +96,28 @@ ___________________________________________
 	}
 
 
-	$observer = new Observer();
+	$subject_1 = new Subject_1();
 
 
-	$subject_1 = new Subject_1(100.99);
+	$observer_1 = new Observer_1(100.99);
 
-	$subject_2 = new Subject_2(200.99);
+	$observer_2 = new Observer_2(200.99);
 
+	$subject_1->add($observer_1);
 
-	$observer->add($subject_1);
-
-	$observer->add($subject_2);
-
-	echo "<hr>";
-
-	$observer->updateValue(1);
+	$subject_1->add($observer_2);
 
 	echo "<hr>";
 
-	$observer->updateValue(0);
+	$subject_1->updateValue(1);
+
+	echo "<hr>";
+
+	$subject_1->updateValue(0);
 
 
 	echo "<hr>";
 
-	$observer->updateValue(1);
+	$subject_1->updateValue(1);
 
 ?>
